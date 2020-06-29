@@ -22,8 +22,11 @@ package demo.todo.hibernate;
 
 import act.Act;
 import act.db.DbBind;
+import act.db.DbService;
+import act.db.hibernate.HibernateService;
 import act.db.jpa.JPADao;
 import act.db.sql.tx.Transactional;
+import org.osgl.$;
 import org.osgl.http.H;
 import org.osgl.mvc.annotation.DeleteAction;
 import org.osgl.mvc.annotation.GetAction;
@@ -32,7 +35,10 @@ import org.osgl.mvc.annotation.PutAction;
 import org.osgl.util.S;
 
 import javax.inject.Inject;
+import javax.inject.Named;
+import javax.sql.DataSource;
 import javax.validation.constraints.NotNull;
+import java.sql.Connection;
 
 /**
  * A Simple Todo application controller
@@ -40,11 +46,19 @@ import javax.validation.constraints.NotNull;
 @SuppressWarnings("unused")
 public class Todo {
 
-    @Inject
-    private JPADao<Long, TodoItem> dao;
 
     @GetAction
     public void home() {
+    }
+
+    @Inject
+    private JPADao<Long, TodoItem> dao;
+
+    @GetAction("test")
+    public String test(@Named("default") DbService svc) throws Exception {
+        HibernateService hs = $.cast(svc);
+        Connection conn = hs.dataSource().getConnection();
+        return "do whatever you need here";
     }
 
     @GetAction("/list")
